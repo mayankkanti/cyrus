@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="AI Portfolio">
+        <meta name="author" content="Mayank Kanti">
+        <title>Mayank's Basement</title>
+        <!-- Bootstrap core CSS -->
+        <link href="static/bootstrap/css/bootstrap.css" rel="stylesheet">
+        <!-- Custom styles for this template -->
+        <link href="static/cover.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="site-wrapper">
+            <div id="tsparticles" style="position: fixed; width: 100%; height: 100%; z-index: 0;"></div>
+            <div class="site-wrapper-inner">
+              <div class="cover-container">
+                <div class="masthead clearfix">
+                  <div class="inner">
+                    <h3 class="masthead-brand">Mayank's Basement</h3>
+                    <nav class="nav nav-masthead">
+                      <a class="nav-link active" href="#">Home</a>
+                      <a class="nav-link" href="/about.html">About</a>
+                      <a class="nav-link" href="mailto:<mail_here>">Contact</a>
+                    </nav>
+                  </div>
+                </div>
+                <div class="inner cover">
+                  <h1 class="cover-heading">Cyrus.</h1>
+                  {% autoescape off %}
+                  <p class="lead" id="reply-dynamic">Ask me anything about Mayank!</p>
+                  {% endautoescape %}
+                  <p class="lead">
+                    <div id="bottom-text-textarea" contenteditable="true"></div><br>
+                  </p>
+                </div>
+                <div class="mastfoot">
+                  <div class="inner">
+                    <p>Made with love by <b>@Mayank</b></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <!-- Bootstrap core JavaScript -->
+        <script src="static/assets/js/jquery.min.js"></script>
+        <script src="static/assets/js/popper.js"></script>
+        <script src="static/bootstrap/js/bootstrap.min.js"></script>
+        <!-- Markdown Script -->
+        <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+        <!-- Chatbot Script -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById("bottom-text-textarea").addEventListener("keydown", async function(event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        console.log("Enter Key Pressed"); 
+                        const query = document.getElementById("bottom-text-textarea").innerText.trim();
+                        document.getElementById("reply-dynamic").innerHTML = "thinking...";
+                        document.getElementById("bottom-text-textarea").innerText = "";
+                        try {
+                            const response = await fetch('/chatbot/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ query: query })
+                            });
+                            if (response.ok) {
+                                const data = await response.text();
+                                const cleanedData = data.replace(/^"(.*)"$/, '$1');
+                                document.getElementById("reply-dynamic").innerHTML = cleanedData;
+                            } else {
+                                document.getElementById("reply-dynamic").innerHTML = "Error, bad packet.";
+                            }
+                        } catch (error) {
+                            console.error("Fetch error:", error);
+                            document.getElementById("reply-dynamic").innerHTML = "Error: Could not retrieve response.";
+                        }
+                    }
+                });
+            });
+        </script>
+        <!-- TsParticle Script -->
+        <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.0.6/tsparticles.bundle.min.js"></script>
+        <script src="static/particles/js/particle.js"></script>
+        
+    </body>
+</html>
